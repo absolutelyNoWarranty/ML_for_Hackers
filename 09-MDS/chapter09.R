@@ -183,8 +183,8 @@ head(rollcall.mds[[1]])
 cong.110 <- rollcall.mds[[9]]
 
 base.110 <- ggplot(cong.110, aes(x = x, y = y)) +
-  scale_size(to = c(2,2), legend = FALSE) +
-  scale_alpha(legend = FALSE) + theme_bw() +
+  scale_size(to = c(2,2), guide = "none") +
+  scale_alpha(guide = "none") + theme_bw() +
   opts(axis.ticks = theme_blank(),
        axis.text.x = theme_blank(),
        axis.text.y = theme_blank(),
@@ -213,8 +213,8 @@ print(base.110 + geom_text(aes(color = party,
 all.mds <- do.call(rbind, rollcall.mds)
 all.plot <- ggplot(all.mds, aes(x = x, y = y)) +
   geom_point(aes(shape = party, alpha = 0.75, size = 2)) +
-  scale_size(to = c(2, 2), legend = FALSE) +
-  scale_alpha(legend = FALSE) +
+  scale_size(to = c(2, 2), guide = "none") +
+  scale_alpha(guide = "none") +
   theme_bw() +
   opts(axis.ticks = theme_blank(),
        axis.text.x = theme_blank(),
@@ -243,8 +243,8 @@ for(i in 1:length(rollcall.mds))
   
   # Build base plot
   mds.plot <- ggplot(mds, aes(x = x, y = y)) +
-    scale_size(to = c(2, 2), legend = FALSE) +
-    scale_alpha(legend = FALSE) +
+    scale_size(to = c(2, 2), guide = "none") +
+    scale_alpha(guide = "none") +
     theme_bw() +
     opts(axis.ticks = theme_blank(), 
          axis.text.x = theme_blank(),

@@ -161,8 +161,8 @@ from.scales <- ggplot(from.ex) +
                 color = "darkblue")) +
   scale_x_continuous(breaks = 1:nrow(from.ex), labels = from.ex$From.EMail) +
   coord_flip() +
-  scale_fill_manual(values = c("lightgrey" = "lightgrey"), legend = FALSE) +
-  scale_color_manual(values = c("darkblue" = "darkblue"), legend = FALSE) +
+  scale_fill_manual(values = c("lightgrey" = "lightgrey"), guide = "none") +
+  scale_color_manual(values = c("darkblue" = "darkblue"), guide = "none") +
   ylab("Number of Emails Received (truncated at 6)") +
   xlab("Sender Address") +
   theme_bw() +
@@ -423,7 +423,7 @@ priority.threshold <- median(train.ranks.df$Rank)
 threshold.plot <- ggplot(train.ranks.df, aes(x = Rank)) +
   stat_density(aes(fill="darkred")) +
   geom_vline(xintercept = priority.threshold, linetype = 2) +
-  scale_fill_manual(values = c("darkred" = "darkred"), legend = FALSE) +
+  scale_fill_manual(values = c("darkred" = "darkred"), guide = "none") +
   theme_bw()
 ggsave(plot = threshold.plot,
        filename = file.path("images", "01_threshold_plot.pdf"),
@@ -455,7 +455,7 @@ testing.plot <- ggplot(subset(final.df, Type == "TRAINING"), aes(x = Rank)) +
   stat_density(data = subset(final.df, Type == "TESTING"),
                aes(fill = Type, alpha = 0.65)) +
   geom_vline(xintercept = priority.threshold, linetype = 2) +
-  scale_alpha(legend = FALSE) +
+  scale_alpha(guide = "none") +
   scale_fill_manual(values = c("TRAINING" = "darkred", "TESTING" = "darkblue")) +
   theme_bw()
 ggsave(plot = testing.plot,

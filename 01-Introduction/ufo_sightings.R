@@ -201,7 +201,7 @@ state.plot <- ggplot(all.sightings, aes(x = YearMonth,y = Sightings)) +
   geom_line(aes(color = "darkblue")) +
   facet_wrap(~State, nrow = 10, ncol = 5) + 
   theme_bw() + 
-  scale_color_manual(values = c("darkblue" = "darkblue"), legend = FALSE) +
+  scale_color_manual(values = c("darkblue" = "darkblue"), guide = "none") +
   scale_x_date(major = "5 years", format = "%Y") +
   xlab("Time") +
   ylab("Number of Sightings") +
