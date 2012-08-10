@@ -1,3 +1,11 @@
+# Changes -
+# Added libraries plyr and scales (needed for new ggplot syntax)
+# Updated ggplot syntax (old syntax scale_x_date(major = "50 years") no longer works)
+# Removed some uncaught rows with NA in DateOccurred, this was messing up the results
+# of running min and max and causing the program to fail when creating date.range
+# Changed legend=FALSE to guide="none" in accordance with the deprecation warning
+
+
 # File-Name:       ufo_sightings.R           
 # Date:            2012-02-10                                
 # Author:          Drew Conway (drew.conway@nyu.edu)
@@ -24,6 +32,8 @@
 
 # Load libraries and data
 library('ggplot2')    # We'll use ggplot2 for all of our visualizations
+library('plyr')       # For the ddply function
+library('scales')
 
 # This is a tab-delimited file, so we use 'read.delim' and set the separator as a tab character.
 # We also have to alter two defaults; first, we want the strings to not be converted to
@@ -64,6 +74,10 @@ ufo <- ufo[good.rows, ]        # it is only about 0.6% of the total number of re
 # Now we can convert the strings to Date objects and work with them properly
 ufo$DateOccurred <- as.Date(ufo$DateOccurred, format = "%Y%m%d")
 ufo$DateReported <- as.Date(ufo$DateReported, format = "%Y%m%d")
+
+# There are some NAs after the conversion due to improperly formatted date strings
+# (actually there are exactly 2) and it's because they only have the year, e.g. 19940000
+ufo <- subset(ufo, !(is.na(DateOccurred) | is.na(DateReported)))
 
 # It will be useful to create separate columns for both town and state from the Location 
 # column.  To do so we will use the 'strsplit' function to perform the regex.
@@ -136,7 +150,7 @@ ufo.us <- subset(ufo.us, DateOccurred >= as.Date("1990-01-01"))
 # Let's look at the histogram now
 new.hist <- ggplot(ufo.us, aes(x = DateOccurred)) +
   geom_histogram() +
-  scale_x_date(major = "50 years")
+  scale_x_date(breaks = date_breaks("50 years"), labels = date_format("%Y"))
 ggsave(plot = new.hist,
        filename = file.path("images", "new_hist.pdf"),
        height = 6,

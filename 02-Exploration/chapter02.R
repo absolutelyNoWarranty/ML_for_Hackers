@@ -1,3 +1,6 @@
+# Changes -
+# Changed legend=FALSE to guide="none" in accordance with the deprecation warning
+
 # File-Name:       chapter02.R           
 # Date:            2011-11-11                                
 # Author:          John Myles White
