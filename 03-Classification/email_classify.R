@@ -1,3 +1,8 @@
+# Changes -
+# Changed legend=FALSE to guide="none" in accordance with the deprecation warning
+# Replaced zeros in the final classification data-frame so the following plot, which
+# uses a log-scale, would work without complaints.
+
 # File-Name:       email_classify.R           
 # Date:            2012-02-10                                
 # Author:          Drew Conway (drew.conway@nyu.edu)
