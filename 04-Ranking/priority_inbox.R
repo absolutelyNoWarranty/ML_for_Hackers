@@ -1,3 +1,11 @@
+# Changes -
+# Changed legend=FALSE to guide="none" in accordance with the deprecation warning
+# Added some helpful(?) 
+# Replaced the rather redundant use of grepl to get an indice to find a value with
+# a grep which has argument value=TRUE (returns the matched value)
+# Added the necessary import of plyr to use ddply
+# Fixed some typos in the comments
+
 # File-Name:       priority_inbox.R           
 # Date:            2012-02-10                                
 # Author:          Drew Conway (drew.conway@nyu.edu)
@@ -24,21 +32,22 @@
 # Load libraries
 library('tm')
 library('ggplot2')
+library('plyr')
 
 # Set the global paths
 data.path <- file.path("..", "03-Classification", "data")
 easyham.path <- file.path(data.path, "easy_ham")
 
-# We define a set of function that will extract the data
+# We define a set of functions that will extract the data
 # for the feature set we have defined to rank email
-# impportance.  This includes the following: message
+# importance.  This includes the following: message
 # body, message source, message subject, and date the
 # message was sent.
 
 # Simply returns the full text of a given email message
 msg.full <- function(path)
 {
-  con <- file(path, open = "rt", encoding = "latin1")
+  con <- file(path, open = "rt", encoding = "latin1") # So named because it is a "connection object" (external pointer) to a file.
   msg <- readLines(con)
   close(con)
   return(msg)
@@ -46,9 +55,10 @@ msg.full <- function(path)
 
 # Retuns the email address of the sender for a given
 # email message
+# msg.vec is assumed to be a list of lines of text which make up the email.
 get.from <- function(msg.vec)
 {
-  from <- msg.vec[grepl("From: ", msg.vec)]
+  from <- grep("From: ", msg.vec, value=TRUE) # Gets the line that contains "From:"
   from <- strsplit(from, '[":<> ]')[[1]]
   from <- from[which(from  != "" & from != " ")]
   return(from[grepl("@", from)][1])
@@ -58,7 +68,7 @@ get.from <- function(msg.vec)
 get.subject <- function(msg.vec)
 {
   subj <- msg.vec[grepl("Subject: ", msg.vec)]
-  if(length(subj) > 0)
+  if(length(subj) > 0) # Perform check since not all messages have a subject line.
   {
     return(strsplit(subj, "Subject: ")[[1]][2])
   }
@@ -72,19 +82,17 @@ get.subject <- function(msg.vec)
 # only the message body for a given email.
 get.msg <- function(msg.vec)
 {
-  msg <- msg.vec[seq(which(msg.vec == "")[1] + 1, length(msg.vec), 1)]
+  msg <- msg.vec[seq(which(msg.vec == "")[1] + 1, length(msg.vec), 1)] # Line after first blank line.
   return(paste(msg, collapse = "\n"))
 }
 
 # Retuns the date a given email message was received
 get.date <- function(msg.vec)
 {
-  date.grep <- grepl("^Date: ", msg.vec)
-  date.grep <- which(date.grep == TRUE)
-  date <- msg.vec[date.grep[1]]
-  date <- strsplit(date, "\\+|\\-|: ")[[1]][2]
+  date <- grep("^Date: ", msg.vec, value=TRUE)[1] # Use the first occurrence, which will come from the header.
+  date <- strsplit(date, "\\+|\\-|: ")[[1]][2] # Split on '+' '-' or ": " (colon with space)
   date <- gsub("^\\s+|\\s+$", "", date)
-  return(strtrim(date, 25))
+  return(strtrim(date, 25)) # Standard datetime string is 25 chars long so anything else can be trimmed off.
 }
 
 # This function ties all of the above helper functions together.
@@ -124,8 +132,8 @@ date.converter <- function(dates, pattern1, pattern2)
   return(pattern1.convert)
 }
 
-pattern1 <- "%a, %d %b %Y %H:%M:%S"
-pattern2 <- "%d %b %Y %H:%M:%S"
+pattern1 <- "%a, %d %b %Y %H:%M:%S" # e.g. Wed, 04 Dec 2002 11:36:32
+pattern2 <- "%d %b %Y %H:%M:%S"     # e.g. 04 Dec 2002 11:49:23
 
 allparse.df$Date <- date.converter(allparse.df$Date, pattern1, pattern2)
 
@@ -321,9 +329,9 @@ msg.weights <- data.frame(list(Term = names(msg.terms),
 msg.weights <- subset(msg.weights, Weight > 0)
 
 # This function uses our pre-calculated weight data frames to look up
-# the appropriate weightt for a given search.term.  We use the 'term'
-# parameter to dertermine if we are looking up a word in the weight.df
-# for it message body weighting, or for its subject line weighting.
+# the appropriate weight for a given search.term.  We use the 'term'
+# parameter to determine if we are looking up a word in the weight.df
+# for its message body weighting, or for its subject line weighting.
 get.weights <- function(search.term, weight.df, term = TRUE)
 {
   if(length(search.term) > 0)
@@ -371,7 +379,7 @@ rank.message <- function(path)
                         1)
   
   subj <- strsplit(tolower(msg[3]), "re: ")
-  is.thread <- ifelse(subj[[1]][1] == "", TRUE, FALSE)
+  is.thread <- ifelse(subj[[1]][1] == "", TRUE, FALSE)  
   if(is.thread)
   {
     activity <- get.weights(subj[[1]][2], thread.weights, term = FALSE)
@@ -401,6 +409,7 @@ rank.message <- function(path)
                thread.terms.weights,
                msg.weights)
   
+  # Return date, sender, subject and calculated priority.
   return(c(msg[1], msg[2], msg[3], rank))
 }
 
@@ -419,7 +428,7 @@ train.ranks.df$Rank <- as.numeric(train.ranks.df$Rank)
 # Set the priority threshold to the median of all ranks weights
 priority.threshold <- median(train.ranks.df$Rank)
 
-# Visualize the results to locate threshold
+# Visualize the results to locate threshosld
 threshold.plot <- ggplot(train.ranks.df, aes(x = Rank)) +
   stat_density(aes(fill="darkred")) +
   geom_vline(xintercept = priority.threshold, linetype = 2) +
