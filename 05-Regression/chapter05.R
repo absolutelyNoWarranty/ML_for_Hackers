@@ -1,3 +1,7 @@
+# Changes 
+# Changed legend=FALSE to guide="none" in accordance with the deprecation warning
+# Added some comments
+
 # File-Name:       chapter05.R           
 # Date:            2012-02-10                                
 # Author:          Drew Conway (drew.conway@nyu.edu) and John Myles White (jmw@johnmyleswhite.com)                                                                    
@@ -19,14 +23,14 @@
 
 library('ggplot2')
 
-# First snippet
+# First snippet - Visualize the effects of smoking
 ages <- read.csv(file.path('data', 'longevity.csv'))
 
 ggplot(ages, aes(x = AgeAtDeath, fill = factor(Smokes))) +
   geom_density() +
   facet_grid(Smokes ~ .)
 
-# Second snippet
+# Second snippet - Calculate the squared error of a guess made intuitively
 ages <- read.csv(file.path('data', 'longevity.csv'))
 
 guess <- 73
@@ -34,7 +38,7 @@ guess <- 73
 with(ages, mean((AgeAtDeath - guess) ^ 2))
 #[1] 32.991
 
-# Third snippet
+# Third snippet - Graph the squared error of different guesses
 ages <- read.csv(file.path('data', 'longevity.csv'))
 
 guess.accuracy <- data.frame()
@@ -52,7 +56,7 @@ ggplot(guess.accuracy, aes(x = Guess, y = Error)) +
   geom_point() +
   geom_line()
 
-# Fourth snippet
+# Fourth snippet - Using the mean as the default prediction
 ages <- read.csv(file.path('data', 'longevity.csv'))
 
 constant.guess <- with(ages, mean(AgeAtDeath))
@@ -72,7 +76,7 @@ ages <- transform(ages,
 
 with(ages, sqrt(mean((AgeAtDeath - NewPrediction) ^ 2)))
 
-# Fifth snippet
+# Fifth snippet - Plot of linear regression on the heights/weights dataset
 library('ggplot2')
 
 heights.weights <- read.csv(file.path('data',
@@ -84,7 +88,7 @@ ggplot(heights.weights, aes(x = Height, y = Weight)) +
   geom_point() +
   geom_smooth(method = 'lm')
 
-# Sixth snippet
+# Sixth snippet - Do a linear regression with lm (linear model)
 fitted.regression <- lm(Weight ~ Height,
                         data = heights.weights)
 
@@ -99,20 +103,20 @@ slope <- coef(fitted.regression)[2]
 # predicted.weight <- intercept + slope * observed.height
 # predicted.weight == -350.737192 + 7.717288 * observed.height
 
-# Eighth snippet
+# Eighth snippet - Use the fitted regression model on the data
 predict(fitted.regression)
 
-# Ninth snippet
+# Ninth snippet - Calculate errors of regression model
 true.values <- with(heights.weights, Weight)
 errors <- true.values - predict(fitted.regression)
 
-# Tenth snippet
+# Tenth snippet - See residuals of regression model
 residuals(fitted.regression)
 
 # Eleventh snippet
 plot(fitted.regression, which = 1)
 
-# Twelfth snippet
+# Twelfth snippet - Residuals of linear model fitted on nonlinear data
 x <- 1:10
 y <- x ^ 2
 
@@ -120,7 +124,7 @@ fitted.regression <- lm(y ~ x)
 
 plot(fitted.regression, which = 1)
 
-# Thirteenth snippet
+# Thirteenth snippet - Sum of squared residuals
 x <- 1:10
 y <- x ^ 2
 
@@ -131,7 +135,7 @@ squared.errors <- errors ^ 2
 sum(squared.errors)
 #[1] 528
 
-# Fourteenth snippet
+# Fourteenth snippet - Mean of squared residuals
 x <- 1:10
 y <- x ^ 2
 
@@ -143,7 +147,7 @@ mse <- mean(squared.errors)
 mse
 #[1] 52.8
 
-# Fifteenth snippet
+# Fifteenth snippet - RMSE root mean squared error
 x <- 1:10
 y <- x ^ 2
 
@@ -166,7 +170,7 @@ r2 <- 1 - (model.mse / mean.mse)
 r2
 #[1] 0.1259502
 
-# Seventeenth snippet
+# Seventeenth snippet - Plotting PageViews vs UniqueVistors scatterplot, not very informative
 top.1000.sites <- read.csv(file.path('data', 'top_1000_sites.tsv'),
                            sep = '\t',
                            stringsAsFactors = FALSE)
@@ -174,11 +178,11 @@ top.1000.sites <- read.csv(file.path('data', 'top_1000_sites.tsv'),
 ggplot(top.1000.sites, aes(x = PageViews, y = UniqueVisitors)) +
   geom_point()
 
-# Eighteenth snippet
+# Eighteenth snippet - Plotting PageViews by itself, also not very informative
 ggplot(top.1000.sites, aes(x = PageViews)) +
   geom_density()
 
-# Ninteenth snippet
+# Ninteenth snippet - Using log transformation, much better
 ggplot(top.1000.sites, aes(x = log(PageViews))) +
   geom_density()
 
@@ -186,7 +190,7 @@ ggplot(top.1000.sites, aes(x = log(PageViews))) +
 ggplot(top.1000.sites, aes(x = log(PageViews), y = log(UniqueVisitors))) +
   geom_point()
 
-# Twenty-first snippet
+# Twenty-first snippet - Plot of Linear Regression on pageviews vs unique visitors
 ggplot(top.1000.sites, aes(x = log(PageViews), y = log(UniqueVisitors))) +
   geom_point() +
   geom_smooth(method = 'lm', se = FALSE)
@@ -195,7 +199,7 @@ ggplot(top.1000.sites, aes(x = log(PageViews), y = log(UniqueVisitors))) +
 lm.fit <- lm(log(PageViews) ~ log(UniqueVisitors),
              data = top.1000.sites)
 
-# Twenty-third snippet
+# Twenty-third snippet - Use summary() to show info about the fitted model
 summary(lm.fit)
 
 #Call:

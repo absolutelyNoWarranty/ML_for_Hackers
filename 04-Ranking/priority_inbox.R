@@ -336,15 +336,17 @@ get.weights <- function(search.term, weight.df, term = TRUE)
 {
   if(length(search.term) > 0)
   {
-    if(term)
+    if(term)  # search.term is a named vector with words from the msg body
     {
       term.match <- match(names(search.term), weight.df$Term)
     }
-    else
+    else  # search.term is a string (the email subject)
     {
       term.match <- match(search.term, weight.df$Thread)
     }
+    
     match.weights <- weight.df$Weight[which(!is.na(term.match))]
+    
     if(length(match.weights) < 1)
     {
       return(1)
