@@ -1,3 +1,9 @@
+# Changes
+# Added some comments
+# Snippet 30, added scale settings to make it look more like the book 
+# Snippet 37, moved glmnet call out of loop 
+# Snippet 38, adjusted some scale settings to make it look more like the book
+
 # File-Name:       chapter06.R           
 # Date:            2012-02-10                                
 # Author:          Drew Conway (drew.conway@nyu.edu) and John Myles White (jmw@johnmyleswhite.com)                                                                    
@@ -19,7 +25,7 @@
 
 library('ggplot2')
 
-# First snippet
+# First snippet - Fitting a GAM (Generalized Additive Model, the default when no method is given to geom_smooth)
 set.seed(1)
 
 x <- seq(-10, 10, by = 0.01)
@@ -32,19 +38,19 @@ ggplot(data.frame(X = x, Y = y), aes(x = X, y = Y)) +
 # Second code snippet
 x.squared <- x ^ 2
 
-# Third code snippet
+# Third code snippet - Replacing one input with another to get a simpler curve
 ggplot(data.frame(XSquared = x.squared, Y = y), aes(x = XSquared, y = Y)) +
   geom_point() +
   geom_smooth(method = 'lm', se = FALSE)
 
-# Fourth code snippet
+# Fourth code snippet - Comparing performance of linear regression using different inputs
 summary(lm(y ~ x))$r.squared
 #[1] 2.973e-06
 
 summary(lm(y ~ x.squared))$r.squared
 #[1] 0.9707
 
-# Fifth code snippet
+# Fifth code snippet - Create a noisy sine wave
 set.seed(1)
 
 x <- seq(0, 1, by = 0.01)
@@ -55,7 +61,7 @@ df <- data.frame(X = x, Y = y)
 ggplot(df, aes(x = X, y = Y)) +
   geom_point()
 
-# Sixth code snippet
+# Sixth code snippet - Result of using linear regression on the noisy sine wave
 summary(lm(Y ~ X, data = df))
 
 #Call:
@@ -81,7 +87,7 @@ ggplot(data.frame(X = x, Y = y), aes(x = X, y = Y)) +
   geom_point() +
   geom_smooth(method = 'lm', se = FALSE)
 
-# Eighth code snippet
+# Eighth code snippet - Adding more inputs
 df <- transform(df, X2 = X ^ 2)
 df <- transform(df, X3 = X ^ 3)
 
@@ -107,7 +113,7 @@ summary(lm(Y ~ X + X2 + X3, data = df))
 #Multiple R-squared: 0.9745, Adjusted R-squared: 0.9737
 #F-statistic: 1235 on 3 and 97 DF, p-value: < 2.2e-16
 
-# Ninth code snippet
+# Ninth code snippet - Adding even higher powers, showing how the model breaks down with too many inputs
 df <- transform(df, X4 = X ^ 4)
 df <- transform(df, X5 = X ^ 5)
 df <- transform(df, X6 = X ^ 6)
@@ -154,7 +160,7 @@ summary(lm(Y ~ X + X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9 + X10 + X11 + X12 + X13
 #Multiple R-squared: 0.9858, Adjusted R-squared: 0.9837
 #F-statistic: 465.2 on 13 and 87 DF, p-value: < 2.2e-16
 
-# Tenth code snippet
+# Tenth code snippet - Using the degree parameter instead of manually adding inputs
 summary(lm(Y ~ poly(X, degree = 14), data = df))
 
 #Call:
@@ -188,7 +194,7 @@ summary(lm(Y ~ poly(X, degree = 14), data = df))
 #Multiple R-squared: 0.986, Adjusted R-squared: 0.9837
 #F-statistic: 431.7 on 14 and 86 DF, p-value: < 2.2e-16
 
-# Eleventh code snippet
+# Eleventh code snippet - Show plots of models of different degrees
 poly.fit <- lm(Y ~ poly(X, degree = 1), data = df)
 df <- transform(df, PredictedY = predict(poly.fit))
 
@@ -223,7 +229,7 @@ set.seed(1)
 x <- seq(0, 1, by = 0.01)
 y <- sin(2 * pi * x) + rnorm(length(x), 0, 0.1)
 
-# Thirteenth code snippet
+# Thirteenth code snippet - Partition sine wave example data into training and test sets
 n <- length(x)
 
 indices <- sort(sample(1:n, round(0.5 * n)))
@@ -237,13 +243,14 @@ test.y <- y[-indices]
 training.df <- data.frame(X = training.x, Y = training.y)
 test.df <- data.frame(X = test.x, Y = test.y)
 
-# Fourteenth code snippet
+# Fourteenth code snippet - Helper functions which calculates the RMSE
 rmse <- function(y, h)
 {
   return(sqrt(mean((y - h) ^ 2)))
 }
 
-# Fifteenth code snippet
+# Fifteenth code snippet - Fit models which differ in degree of independent inputs on training data and test performance on test data
+# Record results in the 'performance' dataframe
 performance <- data.frame()
 
 for (d in 1:12)
@@ -262,19 +269,22 @@ for (d in 1:12)
                                                               newdata = test.df))))
 }
 
-# Sixteenth code snippet
+# Sixteenth code snippet - Compare training and validation error
 ggplot(performance, aes(x = Degree, y = RMSE, linetype = Data)) +
   geom_point() +
   geom_line()
 
 # Seventeenth code snippet
 lm.fit <- lm(y ~ x)
-model.complexity <- sum(coef(lm.fit) ^ 2)
+model.complexity <- sum(coef(lm.fit) ^ 2)set.seed(1)
 
-# Eighteenth code snippet
+x <- seq(0, 1, by = 0.01)
+y <- sin(2 * pi * x) + rnorm(length(x), 0, 0.1)
+
+# Eighteenth code snippet - Different measures of model complexity
 lm.fit <- lm(y ~ x)
-l2.model.complexity <- sum(coef(lm.fit) ^ 2)
-l1.model.complexity <- sum(abs(coef(lm.fit)))
+l2.model.complexity <- sum(coef(lm.fit) ^ 2)  # l2-norm sum of squares of coefficients
+l1.model.complexity <- sum(abs(coef(lm.fit)))  # l1-norm sum of absolute values
 
 # Ninteenth code snippet
 set.seed(1)
@@ -282,7 +292,9 @@ set.seed(1)
 x <- seq(0, 1, by = 0.01)
 y <- sin(2 * pi * x) + rnorm(length(x), 0, 0.1)
 
-# Twentieth code snippet
+# Twentieth code snippet - Demostrating glmnet 
+# Df is number of nonzero terms %Dev is percent deviance explain, similar to rsquared
+# 
 x <- matrix(x)
 
 library('glmnet')
@@ -330,7 +342,7 @@ rmse <- function(y, h)
   return(sqrt(mean((y - h) ^ 2)))
 }
 
-# Twenty-second code snippet
+# Twenty-second code snippet - Find RMSE of models trained with different regularization parameters
 library('glmnet')
 
 glmnet.fit <- with(training.df, glmnet(poly(X, degree = 10), Y))
@@ -361,12 +373,12 @@ ggplot(performance, aes(x = Lambda, y = RMSE)) +
   geom_line() +
   scale_x_log10()
 
-# Twenty-fourth code snippet
+# Twenty-fourth code snippet - Select the best regularization parameter value and fit the model using the whole dataset
 best.lambda <- with(performance, Lambda[which(RMSE == min(RMSE))])
 
 glmnet.fit <- with(df, glmnet(poly(X, degree = 10), Y))
 
-# Twenty-fifth code snippet
+# Twenty-fifth code snippet - Examine the coefficients of the model produced using the best regularization value. Lots of zereos.
 coef(glmnet.fit, s = best.lambda)
 
 #11 x 1 sparse Matrix of class "dgCMatrix"
@@ -383,14 +395,14 @@ coef(glmnet.fit, s = best.lambda)
 #9 0.0000000
 #10 0.0000000
 
-# Twenty-sixth code snippet
+# Twenty-sixth code snippet - Preprocess the oreilly.csv file and turn it into a DTM (Document Term Matrix)
 ranks <- read.csv(file.path('data', 'oreilly.csv'),
                   stringsAsFactors = FALSE)
 
 library('tm')
 
 documents <- data.frame(Text = ranks$Long.Desc.)
-row.names(documents) <- 1:nrow(documents)
+row.names(documents) <- 1:nrow(documents)  # I have no idea why this is here. It seems redundant. and row.names is always character
 
 corpus <- Corpus(DataframeSource(documents))
 corpus <- tm_map(corpus, tolower)
@@ -399,16 +411,16 @@ corpus <- tm_map(corpus, removeWords, stopwords('english'))
 
 dtm <- DocumentTermMatrix(corpus)
 
-# Twenty-seventh code snippet
+# Twenty-seventh code snippet - Make the data structure more suitable for regression.
 x <- as.matrix(dtm)
-y <- rev(1:100)
+y <- rev(1:100)  # This is the dependent variable, the popularity of the book, but reversed so that 100 is the most popular.
 
 # Twenty-eighth code snippet
 set.seed(1)
 
 library('glmnet')
 
-# Twenty-ninth code snippet
+# Twenty-ninth code snippet - Regularized linear regression on 
 performance <- data.frame()
 
 for (lambda in c(0.1, 0.25, 0.5, 1, 2, 5))
@@ -439,15 +451,19 @@ for (lambda in c(0.1, 0.25, 0.5, 1, 2, 5))
 # Thirtieth code snippet
 ggplot(performance, aes(x = Lambda, y = RMSE)) +
   stat_summary(fun.data = 'mean_cl_boot', geom = 'errorbar') +
-  stat_summary(fun.data = 'mean_cl_boot', geom = 'point')
+  stat_summary(fun.data = 'mean_cl_boot', geom = 'point') +
+  scale_y_continuous(limits=c(20,40))  # Added to make it look more like the book's
 
-# Thirty-first code snippet
+# Logistic Regression to the Rescue
+# Will try to predict whether or not a book is in the top 50
+
+# Thirty-first code snippet - Create dummy-coded class labels (in top 50 or not)
 y <- rep(c(1, 0), each = 50)
 
-# Thirty-second code snippet
+# Thirty-second code snippet - Applying logistic regression to the entire dataset.
 regularized.fit <- glmnet(x, y, family = 'binomial')
 
-# Thirty-third code snippet
+# Thirty-third code snippet - Different values for the 'family' parameter tell glmnet to use different algorithms.
 regularized.fit <- glmnet(x, y)
 
 regularized.fit <- glmnet(x, y, family = 'gaussian')
@@ -501,10 +517,9 @@ for (i in 1:250)
   test.x <- x[-indices, ]
   test.y <- y[-indices]
   
+  glm.fit <- glmnet(training.x, training.y, family = 'binomial')
   for (lambda in c(0.0001, 0.001, 0.0025, 0.005, 0.01, 0.025, 0.5, 0.1))
   {
-    glm.fit <- glmnet(training.x, training.y, family = 'binomial')
-    
     predicted.y <- ifelse(predict(glm.fit, test.x, s = lambda) > 0, 1, 0)
     
     error.rate <- mean(predicted.y != test.y)
@@ -520,4 +535,5 @@ for (i in 1:250)
 ggplot(performance, aes(x = Lambda, y = ErrorRate)) +
   stat_summary(fun.data = 'mean_cl_boot', geom = 'errorbar') +
   stat_summary(fun.data = 'mean_cl_boot', geom = 'point') +
-  scale_x_log10()
+  scale_x_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1)) +  # Adjusted to make it look like the book's
+  scale_y_continuous(limits=c(0.2,0.8))
