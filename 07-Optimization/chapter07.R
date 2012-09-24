@@ -1,3 +1,6 @@
+# Changes
+# made modify.cipher a bit shorter
+
 # File-Name:       chapter07.R           
 # Date:            2012-02-10                                
 # Author:          Drew Conway (drew.conway@nyu.edu) and John Myles White (jmw@johnmyleswhite.com)                                                                    
@@ -17,20 +20,22 @@
 # working directory for the console to whereever you have saved this file prior to running.
 # Otherwise you will see errors when loading data or saving figures!
 
-# First code snippet
+# First code snippet - A linear function which predicts weight from height given parameters a, b. We wish to
+# optimize this function by adjusting a and b.
 height.to.weight <- function(height, a, b)
 {
   return(a + b * height)
 }
 
-# Second code snippet
+# Second code snippet - Create height.weights dataframe. Examine preferred values of a,b of the provided lm function.
 heights.weights <- read.csv(file.path('data', '01_heights_weights_genders.csv'))
 
 coef(lm(Weight ~ Height, data = heights.weights))
 #(Intercept) Height
 #-350.737192 7.717288
 
-# Third code snippet
+# Third code snippet - Takes a (heights/weights) dataset and values for intercept and slope a,b and returns the squared error
+# of the height.to.weight function on the dataset when using those values of a,b.
 squared.error <- function(heights.weights, a, b)
 {
   predictions <- with(heights.weights, height.to.weight(Height, a, b))
@@ -38,7 +43,7 @@ squared.error <- function(heights.weights, a, b)
   return(sum(errors ^ 2))
 }
 
-# Fourth code snippet
+# Fourth code snippet - Try out some a's and b's
 for (a in seq(-1, 1, by = 1))
 {
   for (b in seq(-1, 1, by = 1))
@@ -86,7 +91,9 @@ b.error <- function(b)
 
 curve(sapply(x, function (b) {b.error(b)}), from = -1000, to = 1000)
 
-# Ninth code snippet
+# Ridge Regression
+
+# Ninth code snippet - The ridge regression error function. 
 ridge.error <- function(heights.weights, a, b, lambda)
 {
   predictions <- with(heights.weights, height.to.weight(Height, a, b))
@@ -132,7 +139,8 @@ b.ridge.error <- function(b, lambda)
 }
 curve(sapply(x, function (b) {b.ridge.error(b, lambda)}), from = -1000, to = 1000)
 
-# Twelfth code snippet
+# Twelfth code snippet - An example of an error function which the book says does not work well with optim
+# Seems to work just fine though ...
 absolute.error <- function(heights.weights, a, b)
 {
   predictions <- with(heights.weights, height.to.weight(Height, a, b))
@@ -147,6 +155,8 @@ a.absolute.error <- function(a)
 }
 
 curve(sapply(x, function (a) {a.absolute.error(a)}), from = -1000, to = 1000)
+
+# Code Breaking as Optimization
 
 # Fourteenth code snippet
 english.letters <- c('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
@@ -165,7 +175,7 @@ for (index in 1:length(english.letters))
 
 print(caesar.cipher)
 
-# Fifteenth code snippet
+# Fifteenth code snippet - encrypt/decrypt functions
 apply.cipher.to.string <- function(string, cipher)
 {
   output <- ''
@@ -192,7 +202,7 @@ apply.cipher.to.text <- function(text, cipher)
 
 apply.cipher.to.text(c('sample', 'text'), caesar.cipher)
 
-# Sixteenth code snippet
+# Sixteenth code snippet - Functions for creating and modifying ciphers
 generate.random.cipher <- function()
 {
   cipher <- list()
@@ -217,8 +227,8 @@ modify.cipher <- function(cipher, input, output)
   
   old.output <- cipher[[input]]
   
-  collateral.input <- names(which(sapply(names(cipher),
-                                         function (key) {cipher[[key]]}) == output))
+  collateral.input <- names(which(cipher==output))  # cipher is an array indexed by characters
+                                                    # find the character which mapped to output
   
   new.cipher[[collateral.input]] <- old.output
   
@@ -234,7 +244,7 @@ propose.modified.cipher <- function(cipher)
   return(modify.cipher(cipher, input, output))
 }
 
-# Seventeenth code snippet
+# Seventeenth code snippet - Load the lexical database
 load(file.path('data', 'lexical_database.Rdata'))
 
 # Eighteength code snippet
