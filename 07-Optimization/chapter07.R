@@ -254,7 +254,7 @@ lexical.database[['he']]
 lexical.database[['she']]
 lexical.database[['data']]
 
-# Nineteenth code snippet
+# Nineteenth code snippet - Return the probability of a given one gram (i.e. a single word) occurring with respect to a lexical database
 one.gram.probability <- function(one.gram, lexical.database = list())
 {
   lexical.probability <- lexical.database[[one.gram]]
@@ -269,7 +269,8 @@ one.gram.probability <- function(one.gram, lexical.database = list())
   }
 }
 
-# Twentieth code snippet
+# Twentieth code snippet - Decrypts a text according to a given cypher and returns the probability 
+# of the result being a real message based on the probability of occurrence of it's 1-grams.
 log.probability.of.text <- function(text, cipher, lexical.database = list())
 {
   log.probability <- 0.0
@@ -299,7 +300,7 @@ metropolis.step <- function(text, cipher, lexical.database = list())
   else
   {
     a <- exp(lp2 - lp1)
-    x <- runif(1)
+    x <- runif(1)  # get one (1) random number between 0.0 and 1.0 (non-inclusive), which are the default min, max for runif (random uniform)
     
     if (x < a)
     {
@@ -318,7 +319,7 @@ decrypted.text <- c('here', 'is', 'some', 'sample', 'text')
 # Twenty-third code snippet
 encrypted.text <- apply.cipher.to.text(decrypted.text, caesar.cipher)
 
-# Twenty-fourth code snippet
+# Twenty-fourth code snippet - Run the Metropolis algorithm
 set.seed(1)
 
 cipher <- generate.random.cipher()
