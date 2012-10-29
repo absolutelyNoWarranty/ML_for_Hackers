@@ -1,5 +1,7 @@
 # Changes
 # made modify.cipher a bit shorter
+# 24th snippet - changed the way the data frame is built up (preallocated memory) to make the code
+# slightly faster ... still very, very slow though, primary bottleneck appears to be the lookup table
 
 # File-Name:       chapter07.R           
 # Date:            2012-02-10                                
@@ -261,11 +263,11 @@ one.gram.probability <- function(one.gram, lexical.database = list())
   
   if (is.null(lexical.probability) || is.na(lexical.probability))
   {
-  return(.Machine$double.eps)
+    return(.Machine$double.eps)
   }
   else
   {
-  return(lexical.probability)
+    return(lexical.probability)
   }
 }
 
@@ -299,7 +301,7 @@ metropolis.step <- function(text, cipher, lexical.database = list())
   }
   else
   {
-    a <- exp(lp2 - lp1)
+    a <- exp(lp2 - lp1)  # acceptance ratio P(new)/P(old)
     x <- runif(1)  # get one (1) random number between 0.0 and 1.0 (non-inclusive), which are the default min, max for runif (random uniform)
     
     if (x < a)
@@ -324,9 +326,13 @@ set.seed(1)
 
 cipher <- generate.random.cipher()
 
-results <- data.frame()
+number.of.iterations <- 1000
 
-number.of.iterations <- 50000
+results <- data.frame(Iteration=numeric(number.of.iterations),
+                      LogProbability=numeric(number.of.iterations),
+					  CurrentDecryptedText=character(number.of.iterations),
+					  CorrectText=character(number.of.iterations),
+					  stringsAsFactors=FALSE)
 
 for (iteration in 1:number.of.iterations)
 {
@@ -340,12 +346,8 @@ for (iteration in 1:number.of.iterations)
   
   correct.text <- as.numeric(current.decrypted.text == paste(decrypted.text,
                                                              collapse = ' '))
+  results[iteration, ] <- c(iteration, log.probability, current.decrypted.text, correct.text)
 
-  results <- rbind(results,
-                   data.frame(Iteration = iteration,
-                              LogProbability = log.probability,
-                              CurrentDecryptedText = current.decrypted.text,
-                              CorrectText = correct.text))
   
   cipher <- metropolis.step(encrypted.text, cipher, lexical.database)
 }
