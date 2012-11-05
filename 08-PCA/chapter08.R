@@ -23,8 +23,8 @@ library('ggplot2')
 prices <- read.csv(file.path('data', 'stock_prices.csv'))
 
 prices[1, ]
-# Date Stock Close
-#1 2011-05-25 DTE 51.12
+#        Date Stock Close
+#1 2011-05-25   DTE 51.12
 
 # Second code snippet
 library('lubridate')
