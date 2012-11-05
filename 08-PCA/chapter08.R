@@ -36,6 +36,9 @@ library('reshape')
 
 date.stock.matrix <- cast(prices, Date ~ Stock, value = 'Close')
 
+# 3.5th Snippet - Find which entries of date.stock.matrix are missing.
+which(is.na(date.stock.matrix), arr.ind=TRUE)
+
 # Fourth code snippet
 prices <- subset(prices, Date != ymd('2002-02-01'))
 prices <- subset(prices, Stock != 'DDR')
