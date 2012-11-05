@@ -32,6 +32,8 @@ head(df)
 # Second code snippet
 distance.matrix <- function(df)
 {
+  # given n training examples (nrow(df)) the distance matrix is n-by-n
+  # so create a length-n vector of NA and reshape it into a n-by-n matrix
   distance <- matrix(rep(NA, nrow(df) ^ 2), nrow = nrow(df))
   
   for (i in 1:nrow(df))
@@ -46,6 +48,8 @@ distance.matrix <- function(df)
 }
 
 # Third code snippet
+# Returns the indices of the k-nearest-neighbors in i-th row of the distance matrix (leaving out the
+# indice of the point itself)
 k.nearest.neighbors <- function(i, distance, k = 5)
 {
   return(order(distance[i, ])[2:(k + 1)])
@@ -70,7 +74,7 @@ knn <- function(df, k = 5)
 # Fifth code snippet
 df <- transform(df, kNNPredictions = knn(df))
 
-sum(with(df, Label != kNNPredictions))
+sum(with(df, Label != kNNPredictions))  # number of misclassified
 #[1] 7
 
 nrow(df)
@@ -89,13 +93,12 @@ set.seed(1)
 
 indices <- sort(sample(1:n, n * (1 / 2)))
 
-training.x <- df[indices, 1:2]
+training.x <- df[indices, 1:2]  # x, the inputs X, Y
 test.x <- df[-indices, 1:2]
 
-training.y <- df[indices, 3]
+training.y <- df[indices, 3]  # y, the output (label) 
 test.y <- df[-indices, 3]
 
-# There's a bug here!
 predicted.y <- knn(training.x, test.x, training.y, k = 5)
 
 sum(predicted.y != test.y)
