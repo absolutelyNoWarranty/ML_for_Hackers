@@ -47,9 +47,9 @@ date.stock.matrix <- cast(prices, Date ~ Stock, value = 'Close')
 
 # Fifth code snippet
 cor.matrix <- cor(date.stock.matrix[,2:ncol(date.stock.matrix)])
-correlations <- as.numeric(cor.matrix)
+correlations <- as.numeric(cor.matrix)  # flatten cor.matrix into a vector
 
-ggplot(data.frame(Correlation = correlations),
+ggplot(data.frame(Correlation = correlations),  # plot(density(correlations))
   aes(x = Correlation, fill = 1)) +
   geom_density() +
   opts(legend.position = 'none')
@@ -72,7 +72,7 @@ pca <- princomp(date.stock.matrix[,2:ncol(date.stock.matrix)])
 #24 variables and 2366 observations.
 
 # Eighth code snippet
-principal.component <- pca$loadings[, 1]
+principal.component <- pca$loadings[, 1]  # first principal component
 
 # Ninth code snippet
 loadings <- as.numeric(principal.component)
@@ -83,7 +83,7 @@ ggplot(data.frame(Loading = loadings),
   opts(legend.position = 'none')
 
 # Tenth code snippet
-market.index <- predict(pca)[, 1]
+market.index <- predict(pca)[, 1]  # take the first column which is the first principal component for each date (predict(pca) same as pca$scores)
 
 # Eleventh code snippet
 dji.prices <- read.csv(file.path('data', 'DJI.csv'))
@@ -114,7 +114,7 @@ ggplot(comparison, aes(x = MarketIndex, y = DJI)) +
   geom_point() +
   geom_smooth(method = 'lm', se = FALSE)
 
-# Seventeenth code snippet
+# Seventeenth code snippet - A different type of comparison (by date). Failed attempt.
 alt.comparison <- melt(comparison, id.vars = 'Date')
 
 names(alt.comparison) <- c('Date', 'Index', 'Price')
@@ -124,7 +124,7 @@ ggplot(alt.comparison,
   geom_point() +
   geom_line()
 
-# Eighteenth code snippet
+# Eighteenth code snippet - Redoing 17th snippet but with scaling.
 comparison <- transform(comparison, MarketIndex = scale(MarketIndex))
 comparison <- transform(comparison, DJI = scale(DJI))
 
