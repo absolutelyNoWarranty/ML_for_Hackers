@@ -1,12 +1,12 @@
 # File-Name:       chapter09.R
 # Date:            2012-02-10                                
 # Author:          Drew Conway (drew.conway@nyu.edu)
-# Purpose:         Code for Chapter 4.  In this case study we introduce multidimensional scaling (MDS),
-#                   a technique for visually displaying the simialrity of observations in 
-#                   mutlidimensional space.  We begin with with a very simple example using simulated
+# Purpose:         Code for Chapter 9.  In this case study we introduce multidimensional scaling (MDS),
+#                   a technique for visually displaying the similarity of observations in 
+#                   multidimensional space.  We begin with a very simple example using simulated
 #                   data.  Next, we perform the same analysis on real data, using Senate roll call vote 
-#                   data.  We first must get this data into workable format, then analyze with MDS
-# Data Used:       *.dta files in code/data/, source: http://www.voteview.com/dwnl.htm
+#                   data.  We first must get this data into a workable format, then analyze with MDS.
+# Data Used:       *.dta files in data/roll_call, source: http://www.voteview.com/dwnl.htm
 # Packages Used:   foreign, ggplot2
 
 # All source code is copyright (c) 2012, under the Simplified BSD License.  
